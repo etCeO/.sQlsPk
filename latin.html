@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pig Latin Translator</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: #f4f6f8;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+header {
+  background: #5c6bc0;
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+main {
+  max-width: 720px;
+  margin: 2rem auto;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+h2 {
+  margin-top: 2.5rem;
+  color: #3f51b5;
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+input, textarea, button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+button {
+  background: #3f51b5;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 1.2rem;
+  font-weight: 600;
+}
+
+button:hover {
+  background: #303f9f;
+}
+
+/* 🐷 Pig + Speech Bubble */
+.pig-container {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;   /* STACK vertically */
+  align-items: center;      /* Center horizontally */
+  position: relative;
+}
+
+.pig {
+  font-size: 60px;
+  margin-top: -5px; /* slightly overlap with bubble */
+  z-index: 2;
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+  0%   { transform: translateY(0); }
+  25%  { transform: translateY(-15px); }
+  50%  { transform: translateY(0); }
+  75%  { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+.bounce {
+  animation: bounce 0.6s ease;
+}
+
+/* Speech bubble */
+.speech {
+  background: #ffffff;
+  border: 2px solid #ccc;
+  padding: 0.75rem 1rem;
+  border-radius: 20px;
+  min-width: 200px;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+}
+
+/* Tail pointing downward toward pig */
+.speech:after {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 12px 12px 0;
+  border-style: solid;
+  border-color: #ffffff transparent transparent;
+}
+
+/* Border outline for tail */
+.speech:before {
+  content: "";
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 14px 14px 0;
+  border-style: solid;
+  border-color: #ccc transparent transparent;
+  z-index: -1;
+}
+.name-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #ddd;
+}
+
+@media (max-width: 600px) {
+  .name-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Pig Latin Translator</h1>
+  <p>Convert words and names into Pig Latin</p>
+</header>
+
+<main>
+
+<h2>Translate a Single Word</h2>
+
+<label for="wordInput">Enter a word:</label>
+<input type="text" id="wordInput" placeholder="Example: Hello" />
+<button onclick="translateWord()">Translate Word</button>
+
+<div class="pig-container">
+  <div class="speech" id="wordSpeech">Oink! I’m ready to translate!</div>
+  <div class="pig" id="wordPig">🐷</div>
+</div>
+
+<h2>Translate a First and Last Name</h2>
+
+<div class="name-grid">
+  <div>
+    <label for="firstName">First Name:</label>
+    <input type="text" id="firstName" placeholder="First name" />
+  </div>
+  <div>
+    <label for="lastName">Last Name:</label>
+    <input type="text" id="lastName" placeholder="Last name" />
+  </div>
+</div>
+
+<button onclick="translateName()">Translate Name</button>
+
+<div class="pig-container">
+  <div class="speech" id="nameSpeech">Oink! Enter a name!</div>
+  <div class="pig" id="namePig">🐷</div>
+</div>
+
+<h2>Translate a Sentence</h2>
+
+<label for="sentenceInput">Enter a sentence:</label>
+<textarea id="sentenceInput" rows="3" placeholder="Example: Hello my friend"></textarea>
+
+<button onclick="translateSentence()">Translate Sentence</button>
+
+<div class="pig-container">
+  <div class="speech" id="sentenceSpeech">Oink! Enter a sentence!</div>
+  <div class="pig" id="sentencePig">🐷</div>
+</div>
+
+<footer>
+  <h2>Send Feedback</h2>
+  <p>Have suggestions or found a bug? Send me a message:</p>
+
+  <!-- 🔹 Replace YOUR_FORM_ID with your actual Formspree form ID -->
+  <form action="https://formspree.io/f/mlgwblgq" method="POST">
+    
+    <label for="email">Your Email:</label>
+    <input type="email" id="email" name="_replyto" placeholder="youremail@email.com" required />
+
+    <label for="feedback">Your Feedback:</label>
+    <textarea id="feedback" name="message" rows="4" required></textarea>
+
+    <!-- Optional: Custom subject line -->
+    <input type="hidden" name="_subject" value="New Pig Latin Translator Feedback!" />
+
+    <button type="submit">Send Feedback</button>
+  </form>
+</footer>
+</main>
+
+<script>
+function wordToPig(word) {
+  if (!word) return "";
+
+  const vowels = "aeiou";
+  const isCapitalized = word[0] === word[0].toUpperCase();
+  let w = word.toLowerCase();
+
+  if (vowels.includes(w[0])) {
+    w = w + "yay";
+  } else {
+    let i = 0;
+    while (i < w.length && !vowels.includes(w[i])) {
+      i++;
+    }
+    w = w.slice(i) + w.slice(0, i) + "ay";
+  }
+
+  if (isCapitalized) {
+    w = w[0].toUpperCase() + w.slice(1);
+  }
+
+  return w;
+}
+
+function bouncePig(pigId) {
+  const pig = document.getElementById(pigId);
+  pig.classList.remove("bounce"); // reset
+  void pig.offsetWidth;           // force reflow
+  pig.classList.add("bounce");    // re-add animation
+}
+
+function translateWord() {
+  const word = document.getElementById("wordInput").value.trim();
+  const output = word ? wordToPig(word) : "Please enter a word.";
+  document.getElementById("wordSpeech").textContent = output;
+  bouncePig("wordPig");
+}
+
+function translateName() {
+  const first = document.getElementById("firstName").value.trim();
+  const last = document.getElementById("lastName").value.trim();
+
+  let output;
+
+  if (!first || !last) {
+    output = "Please enter both a first and last name.";
+  } else {
+    output = wordToPig(first) + " " + wordToPig(last);
+  }
+
+  document.getElementById("nameSpeech").textContent = output;
+  bouncePig("namePig");
+}
+
+function translateSentence() {
+  const sentence = document.getElementById("sentenceInput").value.trim();
+
+  let output;
+
+  if (!sentence) {
+    output = "Please enter a sentence.";
+  } else {
+    const words = sentence.split(" ");
+
+    const translated = words.map(word => {
+      // Separate leading and trailing punctuation
+      const match = word.match(/^([^a-zA-Z]*)([a-zA-Z]+)([^a-zA-Z]*)$/);
+
+      if (!match) return word; // if it's only punctuation
+
+      const leading = match[1];
+      const core = match[2];
+      const trailing = match[3];
+
+      return leading + wordToPig(core) + trailing;
+    });
+
+    output = translated.join(" ");
+  }
+
+  document.getElementById("sentenceSpeech").textContent = output;
+  bouncePig("sentencePig");
+}
+</script>
+
+</body>
+</html>
