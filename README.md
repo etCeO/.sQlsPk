@@ -17,3 +17,7 @@ This website is part of a broader initiative titled Ethan LLM Works, a series of
 These projects can be thought of as a creative extension to my previous works, leveraging large language model development toolsets to transform programming languages into a web-based format. While the original Python/Java/C++ scripts listed in the repositories are my own, I do not claim any originality or ownership of the websites generated from this initiative. This endeavor is solely to demonstrate my application of AI-based technologies, in which I'm involved in concepts regarding prompt engineering, system structuring, testing, and refinement before eventual site deployment.
 
 Ethan LLM Works is a self-directed, independent passion of mine I pursue in free time as a means of exploring LLM product development, rapid prototyping, and interactive computational design in a highly intuitive and engaging manner.
+
+### Sample Prompt Engineering
+**Core Implementation**
+
