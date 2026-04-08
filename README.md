@@ -21,3 +21,9 @@ Ethan LLM Works is a self-directed, independent passion of mine I pursue in free
 ### Sample Prompt Engineering
 **Core Implementation**
 
+1. "Turn this Pig Latin python script into a simple html website."
+2. "Modify the background the color scheme to reflect a Pig Latin theme."
+3. "Add pig emojis with comments for final outputs and instructions."
+4. "Add animation to comment bubbles every time an input is entered."
+5. "Add translation of sentences from the code given."
+6. "Ensure the interface follows a consistent font."
