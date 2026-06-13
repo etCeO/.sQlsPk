@@ -1,316 +1,1534 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Pig Latin Translator</title>
-
+<title>Squeal Speak — Pig Latin Language Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-* {
-  box-sizing: border-box;
-  font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+:root {
+  --amber: #F5A623;
+  --amber-light: #FDF0D5;
+  --amber-dark: #C47D0E;
+  --barn: #8B2500;
+  --barn-light: #FFF0EA;
+  --sage: #4A7C59;
+  --sage-light: #EAF4ED;
+  --cream: #FDF6E3;
+  --pink: #FFD6D6;
+  --pink-mid: #F5A0A0;
+  --ink: #2C1A0E;
+  --ink-mid: #5C3D20;
+  --muted: #9B7A5A;
+  --border: #E8D9C0;
+  --white: #FFFFFF;
+  --shadow: rgba(44,26,14,0.10);
+  --radius: 16px;
+  --radius-sm: 8px;
+  --radius-pill: 999px;
 }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: #f4f6f8;
-  margin: 0;
-  padding: 0;
-  color: #333;
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-header {
-  background: #5c6bc0;
-  color: white;
+/* ---- HEADER ---- */
+.site-header {
+  background: var(--barn);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.header-roof {
+  background: var(--amber-dark);
+  height: 8px;
+}
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+.header-pig {
+  font-size: 3.5rem;
+  line-height: 1;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.header-text h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--amber);
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+.header-text p {
+  color: var(--pink);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  letter-spacing: 0.5px;
+}
+.header-badge {
+  margin-left: auto;
+  background: var(--amber);
+  color: var(--barn);
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+.barn-planks {
+  display: flex;
+  gap: 3px;
+  padding: 0.5rem 0 0;
+  opacity: 0.15;
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+.barn-planks span {
+  flex: 1;
+  background: rgba(255,255,255,0.4);
+  border-radius: 2px;
+}
+
+/* ---- NAV TABS ---- */
+.nav-strip {
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+  padding: 0 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-tab {
+  padding: 0.85rem 1.25rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--muted);
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.nav-tab:hover { color: var(--barn); }
+.nav-tab.active {
+  color: var(--barn);
+  border-bottom-color: var(--amber);
+}
+.nav-tab .tab-icon { font-size: 1.1rem; }
+
+/* ---- LAYOUT ---- */
+.page-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* ---- SECTION ---- */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ---- STUDIO PANEL ---- */
+.studio-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 700px) {
+  .studio-layout { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
   padding: 1.5rem;
+}
+.panel-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.panel-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+textarea.main-input {
+  width: 100%;
+  min-height: 160px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.05rem;
+  color: var(--ink);
+  background: var(--cream);
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  line-height: 1.6;
+}
+textarea.main-input:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px rgba(245,166,35,0.15);
+  background: var(--white);
+}
+textarea.main-input::placeholder { color: var(--muted); }
+
+.output-box {
+  min-height: 160px;
+  border: 1.5px solid var(--sage);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.15rem;
+  color: var(--ink);
+  background: var(--sage-light);
+  line-height: 1.6;
+  position: relative;
+  word-break: break-word;
+}
+.output-placeholder {
+  color: var(--sage);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.output-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.btn:hover { background: var(--amber-light); border-color: var(--amber); color: var(--barn); }
+.btn:active { transform: scale(0.97); }
+.btn-primary {
+  background: var(--barn);
+  color: var(--white);
+  border-color: var(--barn);
+  font-size: 0.9rem;
+  padding: 0.6rem 1.4rem;
+}
+.btn-primary:hover { background: #6B1C00; border-color: #6B1C00; color: var(--white); }
+.btn-copy.copied { background: var(--sage-light); border-color: var(--sage); color: var(--sage); }
+
+/* ---- EXAMPLE CHIPS ---- */
+.example-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+.chip {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  background: var(--amber-light);
+  color: var(--amber-dark);
+  border: 1px solid #F5D080;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip:hover { background: var(--amber); color: var(--barn); }
+
+/* ---- STATS GRID ---- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.stat-card {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
   text-align: center;
 }
-
-main {
-  max-width: 720px;
-  margin: 2rem auto;
-  background: white;
-  padding: 2.5rem;
-  border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-}
-
-h2 {
-  margin-top: 2.5rem;
-  color: #3f51b5;
-}
-
-label {
+.stat-num {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.6rem;
+  color: var(--barn);
   display: block;
-  margin-top: 1rem;
-  font-weight: 600;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 0.2rem;
+  display: block;
 }
 
-input, textarea, button {
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 0.4rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+/* ---- WORD TRANSFORMATION CARDS ---- */
+.transform-heading {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.1rem;
+  color: var(--barn);
+  margin: 1.75rem 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.word-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.word-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  animation: popIn 0.25s ease both;
+}
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.wc-original {
+  font-weight: 800;
+  color: var(--ink);
+}
+.wc-arrow {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.wc-rule {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-style: italic;
+  background: var(--cream);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.wc-result {
+  font-family: 'Fredoka One', cursive;
+  color: var(--sage);
   font-size: 1rem;
 }
 
-button {
-  background: #3f51b5;
-  color: white;
-  border: none;
-  cursor: pointer;
-  margin-top: 1.2rem;
-  font-weight: 600;
-}
-
-button:hover {
-  background: #303f9f;
-}
-
-/* 🐷 Pig + Speech Bubble */
-.pig-container {
-  margin-top: 1.5rem;
-  display: flex;
-  flex-direction: column;   /* STACK vertically */
-  align-items: center;      /* Center horizontally */
-  position: relative;
-}
-
-.pig {
-  font-size: 60px;
-  margin-top: -5px; /* slightly overlap with bubble */
-  z-index: 2;
-}
-
-/* Bounce Animation */
-@keyframes bounce {
-  0%   { transform: translateY(0); }
-  25%  { transform: translateY(-15px); }
-  50%  { transform: translateY(0); }
-  75%  { transform: translateY(-8px); }
-  100% { transform: translateY(0); }
-}
-
-.bounce {
-  animation: bounce 0.6s ease;
-}
-
-/* Speech bubble */
-.speech {
-  background: #ffffff;
-  border: 2px solid #ccc;
-  padding: 0.75rem 1rem;
-  border-radius: 20px;
-  min-width: 200px;
-  font-weight: 600;
-  text-align: center;
-  position: relative;
-}
-
-/* Tail pointing downward toward pig */
-.speech:after {
-  content: "";
-  position: absolute;
-  bottom: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 12px 12px 0;
-  border-style: solid;
-  border-color: #ffffff transparent transparent;
-}
-
-/* Border outline for tail */
-.speech:before {
-  content: "";
-  position: absolute;
-  bottom: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 14px 14px 0;
-  border-style: solid;
-  border-color: #ccc transparent transparent;
-  z-index: -1;
-}
+/* ---- NAME INPUTS ---- */
 .name-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.2rem;
-  margin-top: 0.5rem;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+@media (max-width: 480px) { .name-grid { grid-template-columns: 1fr; } }
+
+.field-group label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+}
+.field-group input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  background: var(--cream);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field-group input:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px rgba(245,166,35,0.15);
+  background: var(--white);
 }
 
-footer {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid #ddd;
+/* ---- PIG SPEECH ---- */
+.pig-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--pink);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--pink-mid);
+}
+.pig-bubble {
+  background: var(--white);
+  border: 1.5px solid var(--pink-mid);
+  border-radius: 18px;
+  padding: 0.6rem 1.1rem;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  color: var(--barn);
+  text-align: center;
+  position: relative;
+  max-width: 100%;
+  word-break: break-word;
+}
+.pig-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px; left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--pink-mid);
+}
+.pig-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -8px; left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--white);
+  z-index: 1;
+}
+.pig-emoji {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-top: 4px;
+}
+.pig-emoji.bounce {
+  animation: pigBounce 0.5s ease;
+}
+@keyframes pigBounce {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-12px) rotate(-5deg); }
+  75% { transform: translateY(-6px) rotate(3deg); }
 }
 
-@media (max-width: 600px) {
-  .name-grid {
-    grid-template-columns: 1fr;
-  }
+/* ---- NLP PIPELINE ---- */
+.pipeline-wrap {
+  margin-top: 1.5rem;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+.pipeline-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+.pipe-step {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.pipe-box {
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  min-width: 90px;
+  transition: all 0.3s;
+}
+.pipe-box.active { box-shadow: 0 0 0 3px rgba(245,166,35,0.3); }
+.pipe-box.done { opacity: 0.7; }
+.pipe-step .arrow {
+  color: var(--muted);
+  font-size: 1rem;
+  padding: 0 0.3rem;
+}
+.pipe-input { background: var(--amber-light); color: var(--amber-dark); border: 1px solid #F5D080; }
+.pipe-token { background: #E8F4F8; color: #1A6A8A; border: 1px solid #B3D9E8; }
+.pipe-process { background: var(--sage-light); color: var(--sage); border: 1px solid #A8D5B5; }
+.pipe-output { background: var(--pink); color: var(--barn); border: 1px solid var(--pink-mid); }
+.pipe-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+  animation: pulse 1s ease-in-out infinite;
+  display: none;
+}
+.pipe-dot.visible { display: inline-block; }
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* ---- HISTORY ---- */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.history-item {
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+.history-item:hover { border-color: var(--amber); background: var(--amber-light); }
+.hi-original { font-size: 0.85rem; font-weight: 700; color: var(--ink-mid); }
+.hi-pig { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: var(--sage); }
+.hi-time { font-size: 0.7rem; color: var(--muted); }
+
+/* ---- RULE CARDS ---- */
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.rule-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  transition: box-shadow 0.2s;
+}
+.rule-card:hover { box-shadow: 0 4px 16px var(--shadow); }
+.rule-num {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2rem;
+  color: var(--amber);
+  line-height: 1;
+}
+.rule-title {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--barn);
+  margin: 0.25rem 0;
+}
+.rule-desc {
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+  line-height: 1.5;
+}
+.rule-example {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.rule-example strong { color: var(--sage); font-family: 'Fredoka One', cursive; font-size: 0.9rem; }
+
+/* ---- QUIZ ---- */
+.quiz-card {
+  background: var(--white);
+  border: 2px solid var(--amber);
+  border-radius: var(--radius);
+  padding: 2rem;
+  max-width: 520px;
+  margin: 1rem auto;
+  text-align: center;
+}
+.quiz-question {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.5rem;
+  color: var(--barn);
+  margin-bottom: 1.25rem;
+}
+.quiz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+.quiz-opt {
+  padding: 0.75rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.05rem;
+  cursor: pointer;
+  background: var(--cream);
+  color: var(--ink);
+  transition: all 0.15s;
+}
+.quiz-opt:hover { border-color: var(--amber); background: var(--amber-light); }
+.quiz-opt.correct { background: var(--sage-light); border-color: var(--sage); color: var(--sage); }
+.quiz-opt.wrong { background: #FFECEC; border-color: #F5A0A0; color: #8B0000; }
+.quiz-feedback {
+  margin-top: 1rem;
+  font-weight: 700;
+  font-size: 1rem;
+  min-height: 1.5rem;
+}
+.quiz-score {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.streak-badge {
+  display: inline-block;
+  background: var(--amber);
+  color: var(--barn);
+  font-family: 'Fredoka One', cursive;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+}
+
+/* ---- SECTION HEADER ---- */
+.section-header {
+  margin-bottom: 1.5rem;
+}
+.section-header h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.6rem;
+  color: var(--barn);
+}
+.section-header p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+/* ---- DIVIDER ---- */
+.fence-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+.fence-post { width: 10px; height: 30px; background: var(--amber-dark); border-radius: 2px; }
+.fence-rail { flex: 1; height: 4px; background: var(--amber-dark); border-radius: 2px; }
+
+/* ---- MODE TOGGLE ---- */
+.mode-strip {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.mode-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: var(--white);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.mode-btn.active { background: var(--barn); color: var(--white); border-color: var(--barn); }
+
+/* ---- FOOTER ---- */
+.site-footer {
+  background: var(--barn);
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.85rem;
+}
+.site-footer strong { color: var(--amber); font-family: 'Fredoka One', cursive; }
+
+/* ---- UTILITY ---- */
+.mt-1 { margin-top: 0.75rem; }
+.gap-row { display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+.empty-state { text-align: center; color: var(--muted); font-size: 0.9rem; padding: 2rem; }
+.empty-pig { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+
+/* ---- TOAST ---- */
+.toast {
+  position: fixed;
+  bottom: 2rem; right: 2rem;
+  background: var(--barn);
+  color: var(--white);
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.85rem;
+  z-index: 9999;
+  animation: toastIn 0.3s ease;
+  pointer-events: none;
+}
+@keyframes toastIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ---- FEEDBACK FORM ---- */
+.feedback-form {
+  max-width: 520px;
+}
+.feedback-form input,
+.feedback-form textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  background: var(--cream);
+  color: var(--ink);
+  outline: none;
+  margin-bottom: 0.75rem;
+  transition: border-color 0.2s;
+}
+.feedback-form input:focus,
+.feedback-form textarea:focus {
+  border-color: var(--amber);
+  background: var(--white);
+}
+.feedback-form label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
 }
 </style>
 </head>
-
 <body>
 
-<header>
-  <h1>Squeal Speak</h1>
-  <h3>Pig Latin Translator</h3>
-  <p>Convert words and names into Pig Latin</p>
+<header class="site-header">
+  <div class="barn-planks" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="header-inner">
+    <div class="header-pig" role="img" aria-label="pig emoji">🐷</div>
+    <div class="header-text">
+      <h1>Squeal Speak</h1>
+      <p>Pig Latin Language Studio</p>
+    </div>
+    <span class="header-badge">✨ Language Lab</span>
+  </div>
+  <div class="header-roof"></div>
 </header>
 
-<main>
-
-<h2>Translate a Single Word</h2>
-
-<label for="wordInput">Enter a word:</label>
-<input type="text" id="wordInput" placeholder="Example: Hello" />
-<button onclick="translateWord()">Translate Word</button>
-
-<div class="pig-container">
-  <div class="speech" id="wordSpeech">Oink! I’m ready to translate!</div>
-  <div class="pig" id="wordPig">🐷</div>
-</div>
-
-<h2>Translate a First and Last Name</h2>
-
-<div class="name-grid">
-  <div>
-    <label for="firstName">First Name:</label>
-    <input type="text" id="firstName" placeholder="First name" />
+<nav class="nav-strip" aria-label="Main navigation">
+  <div class="nav-inner">
+    <button class="nav-tab active" onclick="showSection('translate')" aria-current="page">
+      <span class="tab-icon">🔤</span> Translate
+    </button>
+    <button class="nav-tab" onclick="showSection('names')">
+      <span class="tab-icon">🪪</span> Names
+    </button>
+    <button class="nav-tab" onclick="showSection('analyze')">
+      <span class="tab-icon">🔬</span> Analyze
+    </button>
+    <button class="nav-tab" onclick="showSection('learn')">
+      <span class="tab-icon">📖</span> Learn
+    </button>
+    <button class="nav-tab" onclick="showSection('quiz')">
+      <span class="tab-icon">🎮</span> Quiz
+    </button>
+    <button class="nav-tab" onclick="showSection('history')">
+      <span class="tab-icon">📜</span> History
+    </button>
+    <button class="nav-tab" onclick="showSection('feedback')">
+      <span class="tab-icon">💌</span> Feedback
+    </button>
   </div>
-  <div>
-    <label for="lastName">Last Name:</label>
-    <input type="text" id="lastName" placeholder="Last name" />
+</nav>
+
+<main class="page-content">
+
+<!-- ======== TRANSLATE ======== -->
+<section id="sec-translate" class="section active">
+  <div class="section-header">
+    <h2>🌾 Translation Studio</h2>
+    <p>Type anything and watch it transform into Pig Latin in real time.</p>
   </div>
-</div>
 
-<button onclick="translateName()">Translate Name</button>
+  <div class="mode-strip" role="group" aria-label="Translation mode">
+    <button class="mode-btn active" onclick="setMode('classic',this)">Classic Pig Latin</button>
+    <button class="mode-btn" onclick="setMode('yay',this)">Yay Variant</button>
+    <button class="mode-btn" onclick="setMode('silly',this)">Silly Mode</button>
+  </div>
 
-<div class="pig-container">
-  <div class="speech" id="nameSpeech">Oink! Enter a name!</div>
-  <div class="pig" id="namePig">🐷</div>
-</div>
+  <div class="studio-layout">
+    <div class="panel">
+      <div class="panel-label">✏️ Your text</div>
+      <textarea class="main-input" id="mainInput" placeholder="Type a word, phrase, or sentence here… or pick an example below!" rows="6" oninput="onMainInput()" aria-label="Text to translate"></textarea>
+      <div class="example-chips" role="list" aria-label="Example phrases">
+        <button class="chip" onclick="loadExample('Hello friend')" role="listitem">Hello friend</button>
+        <button class="chip" onclick="loadExample('The quick brown fox')" role="listitem">The quick brown fox</button>
+        <button class="chip" onclick="loadExample('I love learning languages')" role="listitem">I love learning languages</button>
+        <button class="chip" onclick="loadExample('Welcome to the farm!')" role="listitem">Welcome to the farm!</button>
+        <button class="chip" onclick="loadExample('Speech is the mirror of the soul')" role="listitem">Speech is the mirror of the soul</button>
+      </div>
+    </div>
 
-<h2>Translate a Sentence</h2>
+    <div class="panel">
+      <div class="panel-label">🐷 Pig Latin output</div>
+      <div class="output-box" id="mainOutput" aria-live="polite" aria-label="Translated text">
+        <span class="output-placeholder">Your Pig Latin will appear here…</span>
+      </div>
+      <div class="output-actions">
+        <button class="btn btn-copy" id="copyBtn" onclick="copyOutput()" aria-label="Copy translation">📋 Copy</button>
+        <button class="btn" onclick="clearAll()">🗑 Clear</button>
+        <button class="btn" onclick="saveToHistory()">💾 Save</button>
+      </div>
+      <div class="pig-stage" aria-live="polite">
+        <div class="pig-bubble" id="pigBubble">Oink! I'm ready to translate! 🎉</div>
+        <div class="pig-emoji" id="pigEmoji" role="img" aria-label="pig">🐷</div>
+      </div>
+    </div>
+  </div>
 
-<label for="sentenceInput">Enter a sentence:</label>
-<textarea id="sentenceInput" rows="3" placeholder="Example: Hello my friend"></textarea>
+  <!-- NLP Pipeline -->
+  <div class="pipeline-wrap" aria-label="NLP processing pipeline">
+    <div class="panel-label">⚙️ NLP Pipeline</div>
+    <div class="pipeline-steps" role="list">
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-box pipe-input" id="pipe0">Input Text</div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-dot" id="pipeDot1" aria-hidden="true"></div>
+        <div class="pipe-box pipe-token" id="pipe1">Tokenize</div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-dot" id="pipeDot2" aria-hidden="true"></div>
+        <div class="pipe-box pipe-process" id="pipe2">Apply Rules</div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </div>
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-dot" id="pipeDot3" aria-hidden="true"></div>
+        <div class="pipe-box pipe-output" id="pipe3">Pig Latin ✓</div>
+      </div>
+    </div>
+  </div>
 
-<button onclick="translateSentence()">Translate Sentence</button>
+  <!-- Word cards -->
+  <div id="wordCardsWrap" style="display:none;">
+    <div class="transform-heading">🃏 Word Transformation Cards</div>
+    <div class="word-cards" id="wordCards" aria-label="Word by word transformation"></div>
+  </div>
 
-<div class="pig-container">
-  <div class="speech" id="sentenceSpeech">Oink! Enter a sentence!</div>
-  <div class="pig" id="sentencePig">🐷</div>
-</div>
+  <!-- Stats -->
+  <div id="statsWrap" style="display:none;">
+    <div class="transform-heading">📊 Text Stats</div>
+    <div class="stats-grid" id="statsGrid"></div>
+  </div>
+</section>
 
-<footer>
-  <h2>Send Feedback</h2>
-  <p>Have suggestions or found a bug? Send me a message:</p>
+<!-- ======== NAMES ======== -->
+<section id="sec-names" class="section">
+  <div class="section-header">
+    <h2>🪪 Name Translator</h2>
+    <p>Transform first and last names into their Pig Latin forms.</p>
+  </div>
 
-  <!-- 🔹 Replace YOUR_FORM_ID with your actual Formspree form ID -->
-  <form action="https://formspree.io/f/mlgwblgq" method="POST">
-    
-    <label for="email">Your Email:</label>
-    <input type="email" id="email" name="_replyto" placeholder="youremail@email.com" required />
+  <div class="studio-layout">
+    <div class="panel">
+      <div class="panel-label">✏️ Enter a name</div>
+      <div class="name-grid">
+        <div class="field-group">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" placeholder="e.g. Emma" oninput="onNameInput()" aria-label="First name"/>
+        </div>
+        <div class="field-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" placeholder="e.g. Watson" oninput="onNameInput()" aria-label="Last name"/>
+        </div>
+      </div>
+      <div class="mt-1">
+        <div class="example-chips">
+          <button class="chip" onclick="loadName('Harry','Potter')">Harry Potter</button>
+          <button class="chip" onclick="loadName('Taylor','Swift')">Taylor Swift</button>
+          <button class="chip" onclick="loadName('Albert','Einstein')">Albert Einstein</button>
+          <button class="chip" onclick="loadName('Ada','Lovelace')">Ada Lovelace</button>
+        </div>
+      </div>
+    </div>
 
-    <label for="feedback">Your Feedback:</label>
-    <textarea id="feedback" name="message" rows="4" required></textarea>
+    <div class="panel">
+      <div class="panel-label">🐷 Pig Latin name</div>
+      <div class="output-box" id="nameOutput" aria-live="polite">
+        <span class="output-placeholder">Your Pig Latin name will appear here…</span>
+      </div>
+      <div class="output-actions">
+        <button class="btn btn-copy" onclick="copyEl('nameOutput')">📋 Copy</button>
+      </div>
+      <div class="pig-stage">
+        <div class="pig-bubble" id="nameBubble">Oink! What's your name?</div>
+        <div class="pig-emoji" id="namePig" role="img" aria-label="pig">🐷</div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Optional: Custom subject line -->
-    <input type="hidden" name="_subject" value="New Pig Latin Translator Feedback!" />
+  <div id="nameCardsWrap" style="display:none;">
+    <div class="transform-heading">🃏 Name Breakdown</div>
+    <div class="word-cards" id="nameCards"></div>
+  </div>
+</section>
 
-    <button type="submit">Send Feedback</button>
-  </form>
-</footer>
+<!-- ======== ANALYZE ======== -->
+<section id="sec-analyze" class="section">
+  <div class="section-header">
+    <h2>🔬 Language Analyzer</h2>
+    <p>Paste any text to get deep linguistic insights alongside the Pig Latin translation.</p>
+  </div>
+
+  <div class="panel" style="margin-bottom:1.25rem;">
+    <div class="panel-label">✏️ Paste or type text to analyze</div>
+    <textarea class="main-input" id="analyzeInput" placeholder="Paste a paragraph, poem, or any text here…" rows="6" oninput="onAnalyzeInput()" aria-label="Text to analyze"></textarea>
+  </div>
+
+  <div id="analyzeResults" style="display:none;">
+    <div class="stats-grid" id="analyzeStats"></div>
+
+    <div class="fence-divider" aria-hidden="true">
+      <div class="fence-post"></div><div class="fence-rail"></div>
+      <div class="fence-post"></div><div class="fence-rail"></div>
+      <div class="fence-post"></div>
+    </div>
+
+    <div class="studio-layout">
+      <div class="panel">
+        <div class="panel-label">📝 Original</div>
+        <div style="font-size:0.9rem; line-height:1.7; color: var(--ink-mid);" id="analyzeSrc"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">🐷 Pig Latin</div>
+        <div style="font-family:'Fredoka One',cursive; font-size:0.95rem; line-height:1.7; color: var(--sage);" id="analyzePig"></div>
+      </div>
+    </div>
+
+    <div class="transform-heading">🏆 Top Words</div>
+    <div class="word-cards" id="topWords"></div>
+  </div>
+</section>
+
+<!-- ======== LEARN ======== -->
+<section id="sec-learn" class="section">
+  <div class="section-header">
+    <h2>📖 How Pig Latin Works</h2>
+    <p>Master the rules of this playful language through interactive examples.</p>
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-num">1</div>
+      <div class="rule-title">Vowel-first words</div>
+      <div class="rule-desc">Words starting with a vowel (A, E, I, O, U) simply get <strong>"yay"</strong> added to the end. Easy!</div>
+      <div class="rule-example">apple → <strong>appleyay</strong> &nbsp;|&nbsp; over → <strong>overyay</strong></div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">2</div>
+      <div class="rule-title">Single consonant words</div>
+      <div class="rule-desc">Move the first consonant to the end of the word, then add <strong>"ay"</strong>.</div>
+      <div class="rule-example">pig → <strong>igpay</strong> &nbsp;|&nbsp; dog → <strong>ogday</strong></div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">3</div>
+      <div class="rule-title">Consonant cluster words</div>
+      <div class="rule-desc">Move the entire consonant cluster (multiple consonants at the start) to the end, then add <strong>"ay"</strong>.</div>
+      <div class="rule-example">string → <strong>ingstray</strong> &nbsp;|&nbsp; flip → <strong>ipflay</strong></div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">4</div>
+      <div class="rule-title">Capitalization preserved</div>
+      <div class="rule-desc">The first letter of the Pig Latin word gets the same capitalization as the original word's first letter.</div>
+      <div class="rule-example">Hello → <strong>Ellohay</strong> &nbsp;|&nbsp; WORLD → <strong>ORLDWAY</strong> (first letter only)</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">5</div>
+      <div class="rule-title">Punctuation stays put</div>
+      <div class="rule-desc">Leading and trailing punctuation is stripped before translation and reattached afterward, keeping your sentence structure intact.</div>
+      <div class="rule-example">"Hello!" → <strong>"Ellohay!"</strong></div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">6</div>
+      <div class="rule-title">Yay variant</div>
+      <div class="rule-desc">Some versions use <strong>"way"</strong> instead of <strong>"yay"</strong> for vowel-starting words. Both are valid dialects of Pig Latin!</div>
+      <div class="rule-example">apple → <strong>appleway</strong> (variant)</div>
+    </div>
+  </div>
+
+  <div class="fence-divider" aria-hidden="true">
+    <div class="fence-post"></div><div class="fence-rail"></div>
+    <div class="fence-post"></div><div class="fence-rail"></div>
+    <div class="fence-post"></div>
+  </div>
+
+  <div class="section-header">
+    <h2>🌍 Language Fun Facts</h2>
+    <p>Trivia about Pig Latin and language play.</p>
+  </div>
+  <div class="rules-grid">
+    <div class="rule-card" style="border-left: 4px solid var(--amber);">
+      <div class="rule-title">🎙 Ancient origins</div>
+      <div class="rule-desc">Pig Latin is a form of language game called an "argot." References date back to the 1800s, though the modern "ay" version became popular in the 20th century.</div>
+    </div>
+    <div class="rule-card" style="border-left: 4px solid var(--sage);">
+      <div class="rule-title">🌐 Not just English</div>
+      <div class="rule-desc">Many cultures have their own versions of language games — Spanish has "Jerigonza," French has "Verlan" (syllable reversal), and Swedes have "Rövarspråket."</div>
+    </div>
+    <div class="rule-card" style="border-left: 4px solid var(--barn);">
+      <div class="rule-title">🧠 Linguistic cousin</div>
+      <div class="rule-desc">Language games like Pig Latin are studied in linguistics as examples of morphological play — manipulation of a language's smallest meaningful units (morphemes).</div>
+    </div>
+    <div class="rule-card" style="border-left: 4px solid var(--pink-mid);">
+      <div class="rule-title">📺 Pop culture</div>
+      <div class="rule-desc">Pig Latin appears in films, TV shows, and literature as a secret language between characters. It also appears in the famous toast "Oday ouyay eakspay Igpay Atinlay?"</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== QUIZ ======== -->
+<section id="sec-quiz" class="section">
+  <div class="section-header">
+    <h2>🎮 Pig Latin Quiz</h2>
+    <p>Test your Pig Latin skills! Choose the correct translation.</p>
+  </div>
+
+  <div class="quiz-card">
+    <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:0.5rem;">Translate this word:</div>
+    <div class="quiz-question" id="quizWord">—</div>
+    <div class="quiz-options" id="quizOptions" role="group" aria-label="Answer choices"></div>
+    <div class="quiz-feedback" id="quizFeedback" aria-live="polite"></div>
+    <div class="quiz-score">Score: <strong id="quizScore">0</strong> / <strong id="quizTotal">0</strong>
+      <span id="streakBadge" style="display:none;" class="streak-badge">🔥 1</span>
+    </div>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-primary" onclick="newQuizQuestion()" id="quizNextBtn">Start Quiz 🐷</button>
+    </div>
+  </div>
+</section>
+
+<!-- ======== HISTORY ======== -->
+<section id="sec-history" class="section">
+  <div class="section-header">
+    <h2>📜 Translation History</h2>
+    <p>Your saved and recent translations. Click any to reload it.</p>
+  </div>
+
+  <div class="gap-row" style="margin-bottom:1rem;">
+    <button class="btn" onclick="clearHistory()">🗑 Clear History</button>
+  </div>
+
+  <div id="historyList">
+    <div class="empty-state">
+      <span class="empty-pig">🐷</span>
+      No translations yet. Head over to the Translate tab and start oinking!
+    </div>
+  </div>
+</section>
+
+<!-- ======== FEEDBACK ======== -->
+<section id="sec-feedback" class="section">
+  <div class="section-header">
+    <h2>💌 Send Feedback</h2>
+    <p>Have a suggestion or found a bug? We'd love to hear from you!</p>
+  </div>
+
+  <div class="panel" style="max-width:540px;">
+    <form class="feedback-form" action="https://formspree.io/f/mlgwblgq" method="POST">
+      <label for="fb-email">Your Email</label>
+      <input type="email" id="fb-email" name="_replyto" placeholder="youremail@example.com" required/>
+
+      <label for="fb-msg">Your Message</label>
+      <textarea id="fb-msg" name="message" rows="5" placeholder="Tell us what you think about Squeal Speak…" required style="width:100%; padding:0.75rem 1rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'Nunito',sans-serif; font-size:0.95rem; background:var(--cream); color:var(--ink); resize:vertical; outline:none;"></textarea>
+
+      <input type="hidden" name="_subject" value="Squeal Speak Feedback"/>
+      <button type="submit" class="btn btn-primary" style="margin-top:0.5rem;">Send Feedback 📨</button>
+    </form>
+  </div>
+</section>
+
 </main>
 
-<script>
-function wordToPig(word) {
-  if (!word) return "";
+<footer class="site-footer" role="contentinfo">
+  <strong>Squeal Speak</strong> — A Pig Latin Language Studio 🐷<br>
+  <span style="font-size:0.75rem; opacity:0.6; margin-top:0.25rem; display:block;">Built for language exploration, NLP learning, and farmyard fun.</span>
+</footer>
 
-  const vowels = "aeiou";
-  const isCapitalized = word[0] === word[0].toUpperCase();
+<script>
+// ============================================================
+// CORE PIG LATIN ENGINE
+// ============================================================
+let currentMode = 'classic';
+
+function wordToPig(word, mode) {
+  if (!word) return '';
+  const vowels = 'aeiou';
+  const isCapitalized = word[0] === word[0].toUpperCase() && word[0] !== word[0].toLowerCase();
   let w = word.toLowerCase();
 
+  let pigWord, rule;
+
   if (vowels.includes(w[0])) {
-    w = w + "yay";
+    if (mode === 'yay') { pigWord = w + 'yay'; rule = '+yay'; }
+    else if (mode === 'silly') { pigWord = w + 'oinkay'; rule = '+oinkay'; }
+    else { pigWord = w + 'yay'; rule = '+yay'; }
   } else {
     let i = 0;
-    while (i < w.length && !vowels.includes(w[i])) {
-      i++;
+    while (i < w.length && !vowels.includes(w[i])) i++;
+    const cluster = w.slice(0, i);
+    const rest = w.slice(i);
+    if (mode === 'silly') {
+      pigWord = rest + cluster + 'oinky'; rule = cluster + '→end +oinky';
+    } else {
+      pigWord = rest + cluster + 'ay'; rule = cluster + '→end +ay';
     }
-    w = w.slice(i) + w.slice(0, i) + "ay";
   }
 
-  if (isCapitalized) {
-    w = w[0].toUpperCase() + w.slice(1);
+  if (isCapitalized) pigWord = pigWord[0].toUpperCase() + pigWord.slice(1);
+  return { pig: pigWord, rule };
+}
+
+function getTransformInfo(word) {
+  const clean = word.toLowerCase().replace(/[^a-z]/g,'');
+  if (!clean) return null;
+  const vowels = 'aeiou';
+  const isCapitalized = word[0] === word[0].toUpperCase() && word[0] !== word[0].toLowerCase();
+  const result = wordToPig(clean, currentMode);
+  let pigDisplay = result.pig;
+  if (isCapitalized) pigDisplay = pigDisplay[0].toUpperCase() + pigDisplay.slice(1);
+  return { original: word, pig: pigDisplay, rule: result.rule };
+}
+
+function translateText(text, mode) {
+  if (!text.trim()) return '';
+  return text.split(' ').map(token => {
+    const m = token.match(/^([^a-zA-Z]*)([a-zA-Z]+)([^a-zA-Z]*)$/);
+    if (!m) return token;
+    const res = wordToPig(m[2], mode || currentMode);
+    return m[1] + res.pig + m[3];
+  }).join(' ');
+}
+
+function setMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  onMainInput();
+}
+
+// ============================================================
+// TRANSLATE TAB
+// ============================================================
+let debounceTimer;
+function onMainInput() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(doTranslate, 120);
+}
+
+function doTranslate() {
+  const text = document.getElementById('mainInput').value;
+  const out = document.getElementById('mainOutput');
+  const pig = translateText(text, currentMode);
+
+  if (!text.trim()) {
+    out.innerHTML = '<span class="output-placeholder">Your Pig Latin will appear here…</span>';
+    document.getElementById('pigBubble').textContent = 'Oink! Type something! 🐷';
+    document.getElementById('wordCardsWrap').style.display = 'none';
+    document.getElementById('statsWrap').style.display = 'none';
+    animatePipeline(false);
+    return;
   }
 
-  return w;
+  out.textContent = pig;
+  updateBubble('pigBubble', 'pigEmoji', pig.length > 50 ? 'Oinktastic! 🎉' : pig);
+  buildWordCards(text, 'wordCards', 'wordCardsWrap');
+  buildStats(text);
+  animatePipeline(true);
 }
 
-function bouncePig(pigId) {
-  const pig = document.getElementById(pigId);
-  pig.classList.remove("bounce"); // reset
-  void pig.offsetWidth;           // force reflow
-  pig.classList.add("bounce");    // re-add animation
+function updateBubble(bubbleId, pigId, text) {
+  document.getElementById(bubbleId).textContent = text;
+  const el = document.getElementById(pigId);
+  el.classList.remove('bounce');
+  void el.offsetWidth;
+  el.classList.add('bounce');
 }
 
-function translateWord() {
-  const word = document.getElementById("wordInput").value.trim();
-  const output = word ? wordToPig(word) : "Please enter a word.";
-  document.getElementById("wordSpeech").textContent = output;
-  bouncePig("wordPig");
+function buildWordCards(text, containerId, wrapId) {
+  const words = text.match(/[a-zA-Z]+/g);
+  if (!words || words.length === 0) { document.getElementById(wrapId).style.display='none'; return; }
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  words.slice(0, 20).forEach((w, i) => {
+    const res = wordToPig(w, currentMode);
+    const card = document.createElement('div');
+    card.className = 'word-card';
+    card.style.animationDelay = (i * 0.04) + 's';
+    card.innerHTML = `<span class="wc-original">${w}</span><span class="wc-arrow">→</span><span class="wc-rule">${res.rule}</span><span class="wc-arrow">→</span><span class="wc-result">${res.pig}</span>`;
+    container.appendChild(card);
+  });
+  document.getElementById(wrapId).style.display = 'block';
 }
 
-function translateName() {
-  const first = document.getElementById("firstName").value.trim();
-  const last = document.getElementById("lastName").value.trim();
+function buildStats(text) {
+  const words = text.match(/[a-zA-Z]+/g) || [];
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  const wordCount = words.length;
+  const charCount = text.replace(/\s/g,'').length;
+  const sentCount = sentences.length;
+  const avgLen = wordCount > 0 ? (words.reduce((a,w)=>a+w.length,0)/wordCount).toFixed(1) : 0;
+  const longest = words.reduce((a,w) => w.length > a.length ? w : a, '');
+  const statsGrid = document.getElementById('statsGrid');
+  statsGrid.innerHTML = [
+    ['Words', wordCount],
+    ['Characters', charCount],
+    ['Sentences', sentCount],
+    ['Avg Word Length', avgLen],
+    ['Longest Word', longest || '—'],
+  ].map(([label, val]) => `
+    <div class="stat-card">
+      <span class="stat-num">${val}</span>
+      <span class="stat-label">${label}</span>
+    </div>`).join('');
+  document.getElementById('statsWrap').style.display = 'block';
+}
 
-  let output;
+function animatePipeline(active) {
+  ['pipeDot1','pipeDot2','pipeDot3'].forEach(id => {
+    document.getElementById(id).classList.toggle('visible', active);
+  });
+}
 
-  if (!first || !last) {
-    output = "Please enter both a first and last name.";
+function loadExample(text) {
+  document.getElementById('mainInput').value = text;
+  showSection('translate');
+  doTranslate();
+}
+
+function copyOutput() {
+  const text = document.getElementById('mainOutput').textContent;
+  if (!text || text.includes('will appear here')) return;
+  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard! 📋'));
+  const btn = document.getElementById('copyBtn');
+  btn.classList.add('copied');
+  btn.textContent = '✅ Copied!';
+  setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '📋 Copy'; }, 2000);
+}
+
+function copyEl(id) {
+  const el = document.getElementById(id);
+  const text = el.textContent;
+  if (!text || text.includes('will appear here')) return;
+  navigator.clipboard.writeText(text).then(() => showToast('Copied! 📋'));
+}
+
+function clearAll() {
+  document.getElementById('mainInput').value = '';
+  document.getElementById('mainOutput').innerHTML = '<span class="output-placeholder">Your Pig Latin will appear here…</span>';
+  document.getElementById('pigBubble').textContent = 'Oink! I\'m ready to translate! 🎉';
+  document.getElementById('wordCardsWrap').style.display = 'none';
+  document.getElementById('statsWrap').style.display = 'none';
+  animatePipeline(false);
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+let history = JSON.parse(localStorage.getItem('squealHistory') || '[]');
+
+function saveToHistory() {
+  const input = document.getElementById('mainInput').value.trim();
+  const output = document.getElementById('mainOutput').textContent;
+  if (!input || output.includes('will appear here')) return;
+  const entry = { original: input, pig: output, time: new Date().toLocaleTimeString() };
+  history.unshift(entry);
+  if (history.length > 50) history.pop();
+  localStorage.setItem('squealHistory', JSON.stringify(history));
+  renderHistory();
+  showToast('Saved to history! 💾');
+}
+
+function renderHistory() {
+  const el = document.getElementById('historyList');
+  if (history.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span class="empty-pig">🐷</span>No translations yet. Head over to the Translate tab and start oinking!</div>';
+    return;
+  }
+  el.innerHTML = '<div class="history-list">' + history.map((h,i) => `
+    <div class="history-item" onclick="loadFromHistory(${i})" role="button" tabindex="0" aria-label="Load translation: ${h.original}">
+      <div>
+        <div class="hi-original">${h.original}</div>
+        <div class="hi-pig">${h.pig.slice(0,60)}${h.pig.length > 60 ? '…' : ''}</div>
+      </div>
+      <div class="hi-time">${h.time}</div>
+    </div>`).join('') + '</div>';
+}
+
+function loadFromHistory(i) {
+  document.getElementById('mainInput').value = history[i].original;
+  showSection('translate');
+  doTranslate();
+}
+
+function clearHistory() {
+  history = [];
+  localStorage.removeItem('squealHistory');
+  renderHistory();
+}
+
+// ============================================================
+// NAMES TAB
+// ============================================================
+function onNameInput() {
+  const first = document.getElementById('firstName').value.trim();
+  const last = document.getElementById('lastName').value.trim();
+  const out = document.getElementById('nameOutput');
+  const bubble = document.getElementById('nameBubble');
+  const pig = document.getElementById('namePig');
+
+  if (!first && !last) {
+    out.innerHTML = '<span class="output-placeholder">Your Pig Latin name will appear here…</span>';
+    bubble.textContent = 'Oink! What\'s your name?';
+    document.getElementById('nameCardsWrap').style.display = 'none';
+    return;
+  }
+
+  const parts = [first, last].filter(Boolean);
+  const translated = parts.map(w => wordToPig(w, currentMode).pig).join(' ');
+  out.textContent = translated;
+
+  const shortMsg = translated.length > 30 ? 'That\'s a great Pig Latin name! 🎉' : translated;
+  bubble.textContent = shortMsg;
+  pig.classList.remove('bounce');
+  void pig.offsetWidth;
+  pig.classList.add('bounce');
+
+  buildWordCards(parts.join(' '), 'nameCards', 'nameCardsWrap');
+}
+
+function loadName(first, last) {
+  document.getElementById('firstName').value = first;
+  document.getElementById('lastName').value = last;
+  onNameInput();
+}
+
+// ============================================================
+// ANALYZE TAB
+// ============================================================
+function onAnalyzeInput() {
+  const text = document.getElementById('analyzeInput').value;
+  if (!text.trim()) { document.getElementById('analyzeResults').style.display='none'; return; }
+
+  const words = text.match(/[a-zA-Z]+/g) || [];
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim());
+  const uniqueWords = [...new Set(words.map(w=>w.toLowerCase()))];
+  const richness = words.length > 0 ? ((uniqueWords.length / words.length) * 100).toFixed(0) : 0;
+  const avgLen = words.length > 0 ? (words.reduce((a,w)=>a+w.length,0)/words.length).toFixed(1) : 0;
+  const longest = words.reduce((a,w) => w.length > a.length ? w : a, '');
+
+  document.getElementById('analyzeStats').innerHTML = [
+    ['Words', words.length],
+    ['Unique Words', uniqueWords.length],
+    ['Sentences', sentences.length],
+    ['Characters', text.replace(/\s/g,'').length],
+    ['Avg Word Length', avgLen],
+    ['Vocabulary Richness', richness + '%'],
+    ['Longest Word', longest || '—'],
+  ].map(([l,v]) => `<div class="stat-card"><span class="stat-num">${v}</span><span class="stat-label">${l}</span></div>`).join('');
+
+  document.getElementById('analyzeSrc').textContent = text;
+  document.getElementById('analyzePig').textContent = translateText(text, currentMode);
+
+  // Top words (by frequency, excluding short words)
+  const freq = {};
+  words.forEach(w => { const lw = w.toLowerCase(); if (lw.length > 3) freq[lw] = (freq[lw]||0)+1; });
+  const top = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const topEl = document.getElementById('topWords');
+  topEl.innerHTML = top.map(([w,c]) => {
+    const res = wordToPig(w, currentMode);
+    return `<div class="word-card"><span class="wc-original">${w} (×${c})</span><span class="wc-arrow">→</span><span class="wc-result">${res.pig}</span></div>`;
+  }).join('');
+
+  document.getElementById('analyzeResults').style.display = 'block';
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+const quizWords = ['hello','friend','speak','language','translate','computer','science','elephant','beautiful','strawberry','python','music','travel','wonder','playground'];
+let quizScore = 0, quizTotal = 0, quizStreak = 0, quizActive = false;
+
+function newQuizQuestion() {
+  const word = quizWords[Math.floor(Math.random() * quizWords.length)];
+  const correct = wordToPig(word, 'classic').pig;
+  const wrong = generateWrongAnswers(word, correct);
+  const options = shuffle([correct, ...wrong]);
+
+  document.getElementById('quizWord').textContent = word;
+  document.getElementById('quizFeedback').textContent = '';
+
+  const optEl = document.getElementById('quizOptions');
+  optEl.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.onclick = () => answerQuiz(opt, correct, word);
+    optEl.appendChild(btn);
+  });
+
+  document.getElementById('quizNextBtn').textContent = 'Skip →';
+  quizActive = true;
+}
+
+function generateWrongAnswers(word, correct) {
+  const vowels = 'aeiou';
+  const w = word.toLowerCase();
+  const wrongs = [];
+  wrongs.push(w + 'ay');
+  wrongs.push(w + 'way');
+  const rev = w.split('').reverse().join('') + 'ay';
+  wrongs.push(rev);
+  return shuffle(wrongs.filter(x => x !== correct)).slice(0,3);
+}
+
+function answerQuiz(chosen, correct, word) {
+  if (!quizActive) return;
+  quizActive = false;
+  quizTotal++;
+  document.getElementById('quizTotal').textContent = quizTotal;
+
+  document.querySelectorAll('.quiz-opt').forEach(btn => {
+    btn.onclick = null;
+    if (btn.textContent === correct) btn.classList.add('correct');
+    else if (btn.textContent === chosen && chosen !== correct) btn.classList.add('wrong');
+  });
+
+  if (chosen === correct) {
+    quizScore++;
+    quizStreak++;
+    document.getElementById('quizScore').textContent = quizScore;
+    document.getElementById('quizFeedback').textContent = '🎉 Correct! Well done!';
+    document.getElementById('quizFeedback').style.color = 'var(--sage)';
   } else {
-    output = wordToPig(first) + " " + wordToPig(last);
+    quizStreak = 0;
+    document.getElementById('quizFeedback').textContent = `❌ "${word}" → "${correct}"`;
+    document.getElementById('quizFeedback').style.color = '#8B0000';
   }
 
-  document.getElementById("nameSpeech").textContent = output;
-  bouncePig("namePig");
+  const streak = document.getElementById('streakBadge');
+  if (quizStreak >= 2) { streak.style.display='inline'; streak.textContent = '🔥 ' + quizStreak; }
+  else streak.style.display = 'none';
+
+  document.getElementById('quizNextBtn').textContent = 'Next Question →';
 }
 
-function translateSentence() {
-  const sentence = document.getElementById("sentenceInput").value.trim();
-
-  let output;
-
-  if (!sentence) {
-    output = "Please enter a sentence.";
-  } else {
-    const words = sentence.split(" ");
-
-    const translated = words.map(word => {
-      // Separate leading and trailing punctuation
-      const match = word.match(/^([^a-zA-Z]*)([a-zA-Z]+)([^a-zA-Z]*)$/);
-
-      if (!match) return word; // if it's only punctuation
-
-      const leading = match[1];
-      const core = match[2];
-      const trailing = match[3];
-
-      return leading + wordToPig(core) + trailing;
-    });
-
-    output = translated.join(" ");
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-
-  document.getElementById("sentenceSpeech").textContent = output;
-  bouncePig("sentencePig");
+  return arr;
 }
+
+// ============================================================
+// NAV
+// ============================================================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => { t.classList.remove('active'); t.removeAttribute('aria-current'); });
+  document.getElementById('sec-' + id).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const sectionMap = {'translate':0,'names':1,'analyze':2,'learn':3,'quiz':4,'history':5,'feedback':6};
+  if (sectionMap[id] !== undefined) {
+    tabs[sectionMap[id]].classList.add('active');
+    tabs[sectionMap[id]].setAttribute('aria-current','page');
+  }
+  if (id === 'history') renderHistory();
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderHistory();
+newQuizQuestion();
 </script>
-
 </body>
 </html>
